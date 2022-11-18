@@ -12,14 +12,15 @@ Each question has 4 symbols that change according to a number set.
 The task is to choose the set of numbers that reflects the symbols’ order at the bottom, in relation to the symbols at the top.
 
 # Behaviour
-Single level multivariable questions
+<pre>
+Single level multivariable questions.
         A, B, C, D
             |
 2 3 1 4 | 4 2 1 3 | 2 4 3 1  
             |
         D, B, A, C
 
-Multilevel single varriable questions
+Multilevel single varriable questions.
         A, B, C, D
             |
          2 4 3 1 
@@ -28,7 +29,7 @@ Multilevel single varriable questions
             |
         D, B, A, C
 
-multilevel multivarriable questions. (1st layer only obfuscates the awnswer)
+Multilevel multivarriable questions. (1st layer only obfuscates the awnswer).
         A, B, C, D
             |
 2 3 1 4 | 4 2 1 3 | 2 4 3 1  
@@ -36,6 +37,7 @@ multilevel multivarriable questions. (1st layer only obfuscates the awnswer)
 2 1 4 3 | 1 3 4 2 | 3 4 2 1     
             |
         D, B, A, C
+</pre>
 
 # Usage
 Open SwitchChallenge.html.
