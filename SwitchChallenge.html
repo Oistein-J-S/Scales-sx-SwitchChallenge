@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>SwitchChallenge</title>
+        <style> 
+            /* TODO: Seperate file */
+            body {
+                background: #fff;
+                margin: auto;
+                width: 99%;
+                text-align: center;
+            }
+            .base{ pointer-events: none; }
+            .optional{ 
+                padding: 5px;
+                pointer-events: none; 
+            }
+            .result{ pointer-events: none; }
+
+            .correct{background-color: #4CAE50; /* Green */}
+            .incorrect{background-color: #f44336; /* Red */}
+
+            /* TODO: use as symbols */
+            .square-icon {
+                background-image: url( 'square_purple.png' );
+                background-size: 25px 25px; /* immage size */
+                height: 27px;  /* ellement size should be a bit larger (4px or so) than immage size */
+                width: 27px;
+                -webkit-border-radius: 5px;
+                -moz-border-radius: 5px;
+                border-radius: 5px;
+                padding: 1px;
+                border: 1px solid #000;
+                color: black;
+            }
+            .triangle-icon {
+                background-image: url( 'triangle_green.png' );
+                background-size: 25px 25px; /* immage size */
+                height: 27px;  /* ellement size should be a bit larger (4px or so) than immage size */
+                width: 27px;
+                -webkit-border-radius: 5px;
+                -moz-border-radius: 5px;
+                border-radius: 5px;
+                padding: 1px;
+                border: 1px solid #000;
+                color: black;
+            }
+            .circle-icon {
+                background-image: url( 'circle_red.png' );
+                background-size: 25px 25px; /* immage size */
+                height: 27px;  /* ellement size should be a bit larger (4px or so) than immage size */
+                width: 27px;
+                -webkit-border-radius: 5px;
+                -moz-border-radius: 5px;
+                border-radius: 5px;
+                padding: 1px;
+                border: 1px solid #000;
+                color: black;
+            }
+            .diamond-icon {
+                background-image: url( 'diamond_red.png' );
+                background-size: 25px 25px; /* immage size */
+                height: 27px;  /* ellement size should be a bit larger (4px or so) than immage size */
+                width: 27px;
+                -webkit-border-radius: 5px;
+                -moz-border-radius: 5px;
+                border-radius: 5px;
+                padding: 1px;
+                border: 1px solid #000;
+                color: black;
+            }
+            .star-icon {
+                background-image: url( 'star_grey.png' );
+                background-size: 25px 25px; /* immage size */
+                height: 27px;  /* ellement size should be a bit larger (4px or so) than immage size */
+                width: 27px;
+                -webkit-border-radius: 5px;
+                -moz-border-radius: 5px;
+                border-radius: 5px;
+                padding: 1px;
+                border: 1px solid #000;
+                color: black;
+            }
+            .hexagon-icon {
+                background-image: url( 'hexagon_blue.png' );
+                background-size: 25px 25px; /* immage size */
+                height: 27px;  /* ellement size should be a bit larger (4px or so) than immage size */
+                width: 27px;
+                -webkit-border-radius: 5px;
+                -moz-border-radius: 5px;
+                border-radius: 5px;
+                padding: 1px;
+                border: 1px solid #000;
+                color: black;
+            }
+        </style>
+    </head>
+    <body>
+    
+        <!-- Page layout: -->
+        <!-- Count down timer for how long until end -->
+        <div style="width:800px; margin: 1 auto;"> 
+            <div class="header">
+                <p></p>
+                <label>Total awnswers: </label> <span id="allAnswers"></span>
+                <label>Correct answers: </label> <span id="rightAnswers"></span>
+                <label>Incorrect answers: </label> <span id="wrongAnswers"></span>
+                <label> Time Remaining: </label> <span id="clock"></span>
+                <p></p>
+            </div>
+            <!-- A row of 4 boxes containing one symbol each or 4 symbols -->
+            <div class="base">
+                <button id="t1"></button>
+                <button id="t2"></button>
+                <button id="t3"></button>
+                <button id="t4"></button>
+            </div>
+            <p></p>
+                <!-- Opt: a 4 digit number representing a change in the original arrangement of symbols -->
+                <div class="optional" id="optional"></div>
+            <p></p>
+            <!-- 3 sets of 4 digit numbers in clicable boxes  one representing the correct answer-->
+            <div class="selection">
+                <button id="s1" onclick="isRighButton(0)"></button>
+                <button id="s2" onclick="isRighButton(1)"></button>
+                <button id="s3" onclick="isRighButton(2)"></button>
+            </div>
+            <p></p>
+
+            <!-- The resulting symbol arrangement after the transformation --> 
+            <div class="result">
+                <button id="r1"></button>
+                <button id="r2"></button>
+                <button id="r3"></button>
+                <button id="r4"></button>
+            </div>
+            <p></p>
+            <div class="nextTask">
+                <button id="next" onclick="reset()">next</button>
+                <p></p>
+            </div>
+        </div>
+        
+        <script>
+            /* --------- Variable definition --------- */
+            var fourSymbols = ["square-icon", "triangle-icon", "circle-icon", "diamond-icon"]; // Main symbol list TODO: change to figures?
+            //var fourSymbols = ["A","B","C","D"]; // Main symbol list TODO: change to figures?
+            // All availible permutations
+            const permutations = [[1,2,3,4], [1,3,2,4], [1,3,4,2], [1,4,2,3], [1,4,3,2], [1,2,4,3], [2,1,3,4], [2,3,1,4], [2,3,4,1], [2,4,1,3], [2,4,3,1], [2,1,4,3], [3,2,1,4], [3,1,2,4], [3,1,4,2], [3,4,2,1], [3,4,1,2], [3,2,4,1], [4,2,3,1], [4,3,2,1], [4,3,1,2], [4,1,2,3], [4,1,3,2], [4,2,1,3]];
+            var start = 0; // Precursor to randomisation (a) (choses the set 1,2,3,4) TODO: Add random number generator
+            var perms; // Array of 3 permutations to choose from
+            var togleMultiAnwser = false; // to turn multilevel multiple awnswers on
+            var answer;
+            var rightAnswers = 0; //Number of correct awnswers
+            var wrongAnswers = 0; //Number of incorrect awnswers
+            
+            /* Optional ellements  */
+            var prevSet = []; // variable storing the last answer ex [2,1,3,4].
+            var tempSymbols = fourSymbols; // adds a 2nd layer to the puzzle. 
+
+            /* --------- Ellement setupp --------- */
+            // Counters
+            document.getElementById("allAnswers").innerHTML = rightAnswers + wrongAnswers;
+            document.getElementById("rightAnswers").innerHTML = rightAnswers
+            document.getElementById("wrongAnswers").innerHTML = wrongAnswers;
+
+            // Symbol start arangement
+            document.getElementById("t1").className = tempSymbols[permutations[start][0] -1];
+            document.getElementById("t2").className = tempSymbols[permutations[start][1] -1];
+            document.getElementById("t3").className = tempSymbols[permutations[start][2] -1];
+            document.getElementById("t4").className = tempSymbols[permutations[start][3] -1];
+
+            reset(); // Clean and uppdate the problem
+
+            /* --------- Timer --------- */
+            // Set the time(date) we're counting down to
+            var taskTime = 6; // Minutes
+            var countDown = new Date();
+            countDown.setMinutes(countDown.getMinutes() + taskTime);
+
+            // Update the count down every second
+            var timer = setInterval(
+                function() {
+                    // Get current date and time
+                    var now = new Date().getTime();
+                    var distance = countDown - now;
+                    // Time transformations
+                    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    var seconds = Math.floor((distance % (1000 * 60)) / 1000);      
+                    // Output the result
+                    document.getElementById("clock").innerHTML = minutes + "m " + seconds + "s ";
+                        
+                    // when count is over:
+                    if (distance < 0) {
+                        clearInterval(timer);
+                        document.getElementById("clock").innerHTML = "EXPIRED"; 
+                        // stop next button
+                        document.getElementById("next").onclick = function(){};
+                    }
+            }, 1000);
+            
+            /* --------- Support Functions --------- */
+
+            /* Clean and update the problem */
+            function reset(){
+                // remove css
+                document.getElementById("s1").style.backgroundColor = '';
+                document.getElementById("s2").style.backgroundColor = '';
+                document.getElementById("s3").style.backgroundColor = '';
+
+                // Get new answer sett (guarrantees uniqueness)
+                perms = makeAwnswerSett();
+                
+                // Select a anwser from the permutations (0-2)
+                answer = Math.floor(Math.random() * 3);
+
+                /* Optional */
+                optional(answer);
+
+                /* Uppdate the choices (permutations of 1-4) */
+                document.getElementById("s1").innerHTML = perms[0].toString();
+                document.getElementById("s2").innerHTML = perms[1].toString();
+                document.getElementById("s3").innerHTML = perms[2].toString();
+
+                /* Uppdate the result */
+                document.getElementById("r1").className = tempSymbols[perms[answer][0] -1];
+                document.getElementById("r2").className = tempSymbols[perms[answer][1] -1];
+                document.getElementById("r3").className = tempSymbols[perms[answer][2] -1];
+                document.getElementById("r4").className = tempSymbols[perms[answer][3] -1];
+            }
+
+            function makeAwnswerSett(){
+                // Get new answer sett (guarrantees uniqueness)
+                var permSet = new Set(permutations); // A working copy of permutations
+                
+                /* sellect 3 permutation setts */
+                var tempPerms = [getRandomEllement(permSet)] // 1st sett and resett perms
+                permSet.delete(tempPerms[0]);
+                tempPerms.push(getRandomEllement(permSet)); // 2nd sett
+                permSet.delete(tempPerms[1]);
+                tempPerms.push(getRandomEllement(permSet)); // 3rd sett
+                permSet.delete(tempPerms[2]);
+
+                return tempPerms;
+            }
+
+            /* Update optional ellement */
+            function optional(answer){
+                var optional = document.getElementById("optional"); // html parrent ellement
+
+                // Optional ellements
+                var o1 = document.createElement("BUTTON"); // input ellement
+                o1.id = "o1";
+                var o2 = document.createElement("BUTTON"); // input ellement
+                o2.id = "o2";
+                var o3 = document.createElement("BUTTON"); // input ellement
+                o3.id = "o3";
+
+                // every 2nd question shuld have 2 levels
+                
+                if (prevSet.length === 4 && !togleMultiAnwser){ // if there is a previous value stored
+                    // reorganise temp symbols using prev set (affects next lvl)
+                    tempSymbols = [ fourSymbols[prevSet[0] -1], fourSymbols[prevSet[1] -1], fourSymbols[prevSet[2] -1], fourSymbols[prevSet[3] -1] ];
+              
+                    // Update the ellement
+                    optional.appendChild(o1) ; // Add button 
+                    document.getElementById("o1").innerHTML = prevSet.toString(); // Add content
+                    
+                    prevSet = perms[answer]; // save current answer for use next round // Add dummy value to trigger next lvl   
+                    togleMultiAnwser = true; // enable next lvl
+                } else if (prevSet.length === 4 && togleMultiAnwser ){ // if there is a previous value stored
+                    // reorganise temp symbols using prev set
+                    tempSymbols = [ fourSymbols[prevSet[0] -1], fourSymbols[prevSet[1] -1], fourSymbols[prevSet[2] -1], fourSymbols[prevSet[3] -1] ];
+              
+                    // generate temp awnswer set
+                    var tempSet = makeAwnswerSett();
+                    // random awnswer position
+                    var ans = Math.floor(Math.random() * 3);
+
+                    // Update the ellement (spann is hacky. TODO: Replace by CSS or something)
+                    var span = document.createElement("SPAN");
+                    span.innerHTML = " "
+                    
+                    optional.appendChild(span) ; // Add space
+                    optional.appendChild(o2) ; // Add button 2
+                    optional.appendChild(span) ; // Add space 
+                    optional.appendChild(o3) ; // Add button 3
+                    
+                    for(i = 0; i<3; i++){
+                        if (i == ans) {
+                            document.getElementById("o" + (i+1).toString()).innerHTML = prevSet.toString(); // Add content
+                        } else{
+                            document.getElementById("o" + (i+1).toString()).innerHTML = tempSet[i].toString(); // Add content
+                        };
+                    };
+                    
+                    prevSet = []; // Reset sett
+                    togleMultiAnwser = false; // Reset togle
+                } else{ // Aquire this round's awnswer for next round
+                    prevSet = perms[answer]; // save current answer for use next round
+                    if (optional.hasChildNodes()) { // if child ellement exists
+                        optional.innerHTML = '';// resett optional html ellement
+                    }
+                    tempSymbols = fourSymbols; //Resett temp symbols
+                };      
+            };
+
+            /* Return a random ellement in the set */
+            function getRandomEllement(set){
+                var rand = Math.floor(Math.random() * set.size);
+                return getEllementByIndex(set, rand);
+            };
+            
+            /* Itterate to and return ellement at index */
+            function getEllementByIndex(set, index){
+                var iter = set.values();
+                for (i = 0; i<index; i++){ 
+                    iter.next();};
+                return iter.next().value;
+            };
+            
+            /* check if the integer is the righ answer */
+            function isRighButton(int){
+                if (int === answer){ // it is the correct answer
+                    console.log( (int + 1) + " is the Correct anwser")
+                    document.getElementById("s"+(int+1)).style.backgroundColor = 'green';
+                    rightAnswers++;
+                    document.getElementById("allAnswers").innerHTML = rightAnswers + wrongAnswers;
+                    document.getElementById("rightAnswers").innerHTML = rightAnswers
+                    return true;
+                } else {
+                    console.log( (int + 1) + " is the Incorrect anwser")
+                    document.getElementById("s"+(int+1)).style.backgroundColor = 'red';
+                    wrongAnswers++;
+                    document.getElementById("allAnswers").innerHTML = rightAnswers + wrongAnswers;
+                    document.getElementById("wrongAnswers").innerHTML = wrongAnswers;
+                    return false;
+                };
+            };
+        </script>
+    </body>
+</html>
